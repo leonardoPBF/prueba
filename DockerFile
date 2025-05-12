@@ -17,9 +17,11 @@ WORKDIR /app
 # Copiar el resultado de la compilación desde la etapa anterior
 COPY --from=build-env /app/out ./
 
-# Nombre del archivo DLL generado (asegúrate que sea el correcto)
+# Nombre del archivo DLL generado
 ENV APP_NET_CORE=Prueba_Geolocalizacion.dll
 
-# Puerto expuesto por la app (puedes ajustar si usas otro)
+# Puerto expuesto por la app
 ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 808
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "Prueba_Geolocalizacion.dll"]
