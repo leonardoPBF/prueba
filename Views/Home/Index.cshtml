@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<button onclick="obtenerUbicacion()">Obtener ubicación</button>
+
+<script>
+
+    function obtenerUbicacion() {
+        console.log("Intentando obtener ubicación...");
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    alert("Tu ubicación es:\nLatitud: " + lat + "\nLongitud: " + lon);
+
+                    // Enviar a backend si deseas
+                    fetch('/Home/GuardarUbicacion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ Latitud: lat, Longitud: lon, EmpleadoId: 1 })
+                    }).then(res => res.text())
+                        .then(msg => alert(msg));
+                },
+                function (error) {
+                    alert("No se pudo obtener ubicación: " + error.message);
+                }
+            );
+        } else {
+            alert("Geolocalización no soportada en este navegador.");
+        }
+    }
+</script>
