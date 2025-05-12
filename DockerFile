@@ -1,27 +1,25 @@
-# Etapa 1: Construcción
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build-env
+# Imagen base para build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
-# Copiar archivos de proyecto y restaurar dependencias
+# Copiar archivos del proyecto y restaurar dependencias
 COPY *.csproj ./
 RUN dotnet restore
 
-# Copiar el resto del código y compilar
+# Copiar el resto de archivos y publicar
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-# Etapa 2: Imagen de producción
+# Imagen base para producción
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
-# Copiar el resultado de la compilación desde la etapa anterior
-COPY --from=build-env /app/out ./
+# Copiar desde el build
+COPY --from=build /app/out .
 
-# Nombre del archivo DLL generado
-ENV APP_NET_CORE=Prueba_Geolocalizacion.dll
-
-# Puerto expuesto por la app
-ENV ASPNETCORE_URLS=http://+:8080
+# Exponer el puerto que usa tu app
 EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
 
+# Cambia esto si tu DLL tiene otro nombre
 ENTRYPOINT ["dotnet", "Prueba_Geolocalizacion.dll"]
